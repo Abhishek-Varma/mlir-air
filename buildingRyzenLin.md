@@ -20,7 +20,7 @@ git clone https://github.com/Xilinx/mlir-air.git
 cd mlir-air
 ```
 
-Next, run ```utils/setup_python_packages.sh``` to setup the prerequisite python packages. This script creates and installs the python packages listed in [utils/requirements.txt](utils/requirements.txt) in a virtual python environment called ```sandbox```.
+Next, run ```utils/setup_python_packages.sh``` to setup the prerequisite python packages. This script creates and installs the python packages listed in [utils/requirements.txt](https://github.com/Xilinx/mlir-air/blob/main/utils/requirements.txt) in a virtual python environment called ```sandbox```.
 
 ```bash
 source utils/setup_python_packages.sh
@@ -35,15 +35,18 @@ Run the following to clone and build llvm:
 ./utils/build-llvm-local.sh llvm
 ```
 
-Next, clone and build the aienginev2 module.
+Next, clone and build the aienginev2 module. The installed files should be generated under `aienginev2/install`.
 ```bash
 ./utils/github-clone-build-libxaie.sh
 ```
 
 Next, clone and build MLIR-AIE with paths to llvm, aienginev2, and cmakeModules repositories.
+MLIR-AIE requires some dependent packages to be installed.
+For details on the MLIR-AIE prerequisites, please refer to the MLIR-AIE [repository](https://github.com/Xilinx/mlir-aie?tab=readme-ov-file#prerequisites).
+Once the prerequisites are set up, run the following commands to build MLIR-AIE.
 ```bash
 ./utils/clone-mlir-aie.sh
-./utils/build-mlir-aie-local.sh llvm mlir-aie/cmake/modulesXilinx aienginev2 mlir-aie
+./utils/build-mlir-aie-local.sh llvm mlir-aie/cmake/modulesXilinx aienginev2/install mlir-aie
 ```
 
 After this step, you are ready to build MLIR-AIR!
@@ -52,7 +55,7 @@ After this step, you are ready to build MLIR-AIR!
 
 To build MLIR-AIR provide the paths to llvm, cmakeMoudles, and xrt (here, we assume it is installed in ```/opt/xilinx/xrt```):
 ```bash
-./utils/build-mlir-air-xrt.sh llvm mlir-aie/cmake/modulesXilinx mlir-aie aienginev2 /opt/xilinx/xrt
+./utils/build-mlir-air-xrt.sh llvm mlir-aie/cmake/modulesXilinx mlir-aie aienginev2/install /opt/xilinx/xrt
 ```
 
 ## Environment
@@ -84,6 +87,9 @@ lit -sv --time-tests --show-unsupported --show-excluded  --timeout 600 -j5 test/
  
 # Run an individual test
 lit -sv test/xrt/01_air_to_npu
+
+# Run all xrt tests on device. Takes a long time.
+ninja check-air-e2e
 ```
 
 -----
