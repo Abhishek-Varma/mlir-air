@@ -7,12 +7,19 @@ _Convert memcpy to air.dma_memcpy_nd_
 Converts memory operations to optimize data transfer through Direct Memory 
 Access (DMA) operations.
 
-### `-air-insert-launch-and-segment-around-herd`
+### `-air-insert-launch-around-herd`
 
-_Insert segment and launch ops around herd op_
+_Insert launch op (and optionally segment op) around herd op_
 
-This pass inserts launch and segment operations around herd op, if a herd op 
-does not have a parent launch or segment operation.
+This pass inserts an air.launch over air.herd, where an air.launch 
+is always inserted, and an air.segment is inserted only if 
+insertSegment is set to true.
+
+#### Options
+
+```
+-insert-segment : Option to insert an air.segment around the herd. 
+```
 
 ### `-air-linalg-to-func`
 
@@ -193,16 +200,17 @@ airrt.module_metadata{
 #### Options
 
 ```
--row-offset               : The default start row for any herds without 'y_loc' attribute.
--col-offset               : The default start column for any herds without 'x_loc' attribute.
--emit-while-loop          : Emit a while(1) around the herd code in generated AIR.core ops.
--emit-herd-lock           : Acquire and release a lock at the start and end of herd execution. The default is to acquire lock 0 with value zero and release it with value 0. There is currently no way to override the default behavior.
--test-patterns            : Test the given patterns.
--device                   : AIE device to target.
--use-objectfifo           : Choose whether to lower data movement ops to aie.objectFifo, or directly to aie.locks.
--generate-shim-dma        : Choose whether to schedule shim data movement via generating AIE shim DMA program, or AIR runtime.
--insert-trace-packet-flow : Create packet routed traces for cores and memtiles
--use-pkt-flow-at-shim-dma : Switch to using packet flows for all data movements at shim DMAs, to enable time-multiplex sharing with control packet flows.
+-row-offset                  : The default start row for any herds without 'y_loc' attribute.
+-col-offset                  : The default start column for any herds without 'x_loc' attribute.
+-emit-while-loop             : Emit a while(1) around the herd code in generated AIR.core ops.
+-emit-herd-lock              : Acquire and release a lock at the start and end of herd execution. The default is to acquire lock 0 with value zero and release it with value 0. There is currently no way to override the default behavior.
+-test-patterns               : Test the given patterns.
+-device                      : AIE device to target.
+-use-objectfifo              : Choose whether to lower data movement ops to aie.objectFifo, or directly to aie.locks.
+-generate-shim-dma           : Choose whether to schedule shim data movement via generating AIE shim DMA program, or AIR runtime.
+-insert-trace-packet-flow    : Create packet routed traces for cores and memtiles
+-use-pkt-flow-at-shim-dma    : Switch to using packet flows for all data movements at shim DMAs, to enable time-multiplex sharing with control packet flows.
+-use-lock-race-condition-fix : Switch to enable a fix for lock race condition, which protects against the risk of race condition, at the cost of inserting extra dummy DMA BDs
 ```
 
 ### `-air-to-async`
